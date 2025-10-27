@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { calculateAgeFromAPI } from '../../services/ageService';
+import { calculateAgeAPI } from '../../services/ageService';
 import Calendar from '../Calendar/Calendar';
 import ResultDisplay from '../ResultDisplay/ResultDisplay';
 import DateInput from '../DateInput/DateInput';
@@ -179,7 +179,7 @@ const AgeCalculator = () => {
     setAge(null);
     
     try {
-      const result = await calculateAgeFromAPI(birthdate);
+      const result = await calculateAgeAPI(birthdate);
       setAge(result);
     } catch (err) {
       setError(err.message);

@@ -140,3 +140,46 @@ export const getTotalDays = (age) => {
   const { years, months, days } = age;
   return (years * 365) + (months * 30) + days;
 };
+
+// src/services/ageService.js
+// src/services/ageService.js
+const API_BASE_URL =  "https://age-calc-poc-bckend.onrender.com";
+
+function formatDateForAPI(dateStr) {
+  if (!dateStr) throw new Error("Date is required");
+
+
+  const cleanDate = dateStr.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(cleanDate)) return cleanDate; 
+
+ 
+  const parts = cleanDate.split("/");
+  if (parts.length !== 3) throw new Error("Invalid date format (use DD/MM/YYYY)");
+
+  const [day, month, year] = parts.map((p) => p.padStart(2, "0"));
+  if (!day || !month || !year) throw new Error("Incomplete date");
+
+  return `${year}-${month}-${day}`;
+}
+
+export const calculateAgeAPI = async (birthdate) => {
+  try {
+    const formattedDate = formatDateForAPI(birthdate);
+
+    const response = await fetch(`${API_BASE_URL}/api/calculate-age`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ dob: formattedDate }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`API Error: ${errorText || response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (err) {
+    console.error("Error calling age API:", err);
+    throw new Error("Failed to calculate age. Please check the date format.");
+  }
+};
